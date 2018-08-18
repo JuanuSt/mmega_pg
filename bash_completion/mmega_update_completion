@@ -1,0 +1,21 @@
+# Completion for mmega_update
+#
+# USAGE = mmega_update.sh <account_name|all>
+#
+
+PSQL=$(which psql)
+db_name="test1"
+db_owner="kass"
+
+_mmega_update() 
+{
+    local cur prev
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    local accounts=$($PSQL -d $db_name -t -c "SELECT name FROM config;")
+    COMPREPLY=( $(compgen -W "${accounts} all" -- ${cur}) )
+    return 0
+}
+complete -F _mmega_update mmega_update

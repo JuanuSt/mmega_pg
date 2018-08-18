@@ -1,0 +1,39 @@
+# Completion for mmega_sync
+# 
+# USAGE = mmega_sync.sh <account_name|all> up|down|sync [with_local|with_remote]
+#
+
+db_name="test1"
+db_owner="kass"
+
+_mmega_sync()
+{
+    local cur prev
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    if [ $COMP_CWORD -eq 1 ]; then
+       local accounts=$($PSQL -d $db_name -t -c "SELECT name FROM config;")
+       COMPREPLY=( $(compgen -W "${accounts} all" -- ${cur}) )
+
+    elif [ $COMP_CWORD -eq 2 ]; then
+       COMPREPLY=( $(compgen -W "up down sync" -- ${cur}) )
+
+    elif [ $COMP_CWORD -eq 3 ] && [ "$prev" == "up" ] || [ "$prev" == "down" ] ;then
+          COMPREPLY=( $(compgen -W "no-confirm" -- ${cur}) )
+
+    elif [ "$prev" == "sync" ] && [ $COMP_CWORD -eq 3 ];then
+       COMPREPLY=( $(compgen -W "with_local with_remote" -- ${cur}) )
+
+    elif [ $COMP_CWORD -eq 4 ] && [ "$prev" == "with_local" ] || [ "$prev" == "with_remote" ] ;then
+          COMPREPLY=( $(compgen -W "no-confirm" -- ${cur}) )
+
+    fi
+
+    return 0
+
+}
+complete -F _mmega_sync mmega_sync  
+
+
