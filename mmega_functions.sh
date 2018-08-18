@@ -89,7 +89,7 @@ get_list_accounts() {
 # Create role if not exist
 create_role(){
   if [ -n "$user_passwd" ];then
-     sudo -u postgres $PSQL -d $db_name_bin -c "DO \$\$ \
+     sudo -u postgres $PSQL -c "DO \$\$ \
                                     BEGIN \
                                       CREATE ROLE $1 LOGIN \
                                       ENCRYPTED PASSWORD $2 \
